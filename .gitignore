@@ -1,0 +1,15 @@
+*.vsp
+*.psess
+*.suo
+*.pdb
+*.csproj.user
+*.sqlproj.user
+*.trx
+*.dbmdl
+*.orig
+
+# Build Folders (you can keep bin if you'd like, to store dlls and pdbs)
+[Oo]bj/
+[Bb]in/
+packages/
+
