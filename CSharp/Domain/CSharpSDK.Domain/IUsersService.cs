@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Lucca.CSharpSDK.Domain.Models.Organization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace Lucca.CSharpSDK.Domain
 {
-    public class IUsersService
+    public interface IUsersService : IApiService<User>
     {
     }
 }

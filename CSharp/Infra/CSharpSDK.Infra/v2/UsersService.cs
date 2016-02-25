@@ -9,15 +9,17 @@ using RDD.Domain.Contexts;
 using RDD.Domain;
 using Newtonsoft.Json;
 using RDD.Domain.Exceptions;
+using Lucca.CSharpSDK.Domain;
+using Lucca.CSharpSDK.Infra.Common;
 
-namespace Lucca.CSharpSDK.Infra
+namespace Lucca.CSharpSDK.Infra.v2
 {
-    public class UsersService : ApiService<User>
+    public class UsersService : ApiService<User>, IUsersService
     {
 		public UsersService(ApiSettings settings)
 			: base(settings)
 		{
-			BaseUri = new Uri(settings.InstanceUri, String.Format("/api/{0}/users", settings.ApiVersion));
+			_baseUri = new Uri(settings.InstanceUri, "/api/users");
 		}
     }
 }

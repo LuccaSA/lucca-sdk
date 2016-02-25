@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucca.CSharpSDK.Infra
+namespace Lucca.CSharpSDK.Infra.Common
 {
 	public enum AuthenticationType { User, Application };
 
@@ -18,5 +18,7 @@ namespace Lucca.CSharpSDK.Infra
 			Type = type;
 			Token = token;
 		}
+		public AuthenticationInfo(AuthenticationType type, string token)
+			: this(type, new Guid(token)) { }
 	}
 }

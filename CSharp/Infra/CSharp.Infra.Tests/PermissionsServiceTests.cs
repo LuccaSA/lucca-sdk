@@ -7,26 +7,26 @@ using Lucca.CSharpSDK.Infra.Common;
 
 namespace Lucca.CSharpSDK.Infra.Tests
 {
-	public class UsersServiceTests
+	public class PermissionsServiceTests
 	{
 		[Test]
-		public void GetAllShoulReturnNonEmptyCollectionOnSampleLuccaInstance()
+		public void HasUserPermissionShoulReturnNonEmptyCollectionWhenUserHasPermission()
 		{
 			RDD.Infra.BootStrappers.TestsBootStrapper.ApplicationStart();
 			RDD.Infra.BootStrappers.TestsBootStrapper.ApplicationBeginRequest();
 
 			Resolver.Current().Register<ILogService>(() => new LostLogService());
 
-			var instanceUri = new Uri("https://sandbox.ilucca-demo.net");
-			var token = new Guid("9cba0b77-2991-4443-989f-ebdf3956d4fb");
+			var instanceUri = new Uri("https://pandora.lucca.local");
+			var token = new Guid("fdfc9dbc-c19f-4f85-b9c7-fa32d813b1a5");
 
 			var settings = new ApiSettings(instanceUri, new AuthenticationInfo(AuthenticationType.User, token));
 
-			var service = new v2.UsersService(settings);
+			var service = new v2.PermissionsService(settings);
 
-			var allUsers = service.GetAll();
+			var hasPermisson = service.HasUserPermission(22, 1);
 
-			Assert.IsNotEmpty(allUsers);
+			Assert.IsTrue(hasPermisson);
 		}
 	}
 }

@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucca.CSharpSDK.Infra
+namespace Lucca.CSharpSDK.Infra.Common
 {
-	public class ApiCollectionResponse<TEntity>
+	public class ApiResponse<TEntity>
 	{
 		//Http 200
-		public ApiDataResponse<TEntity> Data { get; set; }
+		public IEnumerable<TEntity> Data { get; set; }
 
 		//Http Error
 		public int Status { get; set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Lucca.CSharpSDK.Infra
+namespace Lucca.CSharpSDK.Infra.Common
 {
 	public class ApiDataResponse<TEntity>
 	{

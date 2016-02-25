@@ -100,6 +100,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="PermissionsServiceTests.cs" />
     <Compile Include="UsersServiceTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

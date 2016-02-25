@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\..\ws-budgetInsight\packages\Lucca.CSharpSDK.Infra.1.0.0\lib\net461\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -92,15 +92,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ApiCollectionResponse.cs" />
-    <Compile Include="ApiDataResponse.cs" />
-    <Compile Include="ApiEntityResponse.cs" />
-    <Compile Include="ApiResponse.cs" />
-    <Compile Include="ApiService.cs" />
-    <Compile Include="ApiSettings.cs" />
-    <Compile Include="AuthenticationInfo.cs" />
-    <Compile Include="UsersService.cs" />
+    <Compile Include="Common\ApiCollectionResponse.cs" />
+    <Compile Include="Common\ApiDataResponse.cs" />
+    <Compile Include="Common\ApiEntityResponse.cs" />
+    <Compile Include="Common\ApiResponse.cs" />
+    <Compile Include="v2\ApiService.cs" />
+    <Compile Include="Common\ApiSettings.cs" />
+    <Compile Include="Common\AuthenticationInfo.cs" />
+    <Compile Include="v2\PermissionsService.cs" />
+    <Compile Include="v2\UsersService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="v3\ApiService.cs" />
+    <Compile Include="v3\PermissionsService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\CSharpSDK.Domain\CSharpSDK.Domain.csproj">
@@ -110,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Compile Include="Extensions\Query.extensions.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

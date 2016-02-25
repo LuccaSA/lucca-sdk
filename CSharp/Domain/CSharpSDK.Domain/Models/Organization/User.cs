@@ -1,4 +1,7 @@
-﻿using System;
+﻿using RDD.Domain;
+using RDD.Domain.Models;
+using RDD.Domain.Models.Querying;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,10 +9,9 @@ using System.Threading.Tasks;
 
 namespace Lucca.CSharpSDK.Domain.Models.Organization
 {
-	public class User
+	public class User : EntityBase<User, int>
 	{
-		public int Id { get; set; }
-		public string Name { get; set; }
-		public string Url { get; set; }
+		public override int Id { get; set; }
+		public override string Name { get; set; }
 	}
 }
