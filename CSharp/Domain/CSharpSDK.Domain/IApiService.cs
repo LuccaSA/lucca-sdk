@@ -15,8 +15,7 @@ namespace Lucca.CSharpSDK.Domain
 		IEnumerable<TEntity> Get(Query<TEntity> query);
 		IEnumerable<TEntity> GetAll();
 		TEntity GetById(string uri);
-		TEntity Post(string uri, NameValueCollection data);
-		TEntity Post(string uri, TEntity entity);
+		TEntity Post(TEntity entity);
 		IDownloadableEntity PostFile(string uri, string filePath);
 		TEntity Put(string uri, TEntity entity);
 	}

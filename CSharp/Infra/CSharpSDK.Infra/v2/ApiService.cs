@@ -79,8 +79,7 @@ namespace Lucca.CSharpSDK.Infra.v2
 		}
 
 		public TEntity GetById(string uri) { throw new NotImplementedException(); }
-		public TEntity Post(string uri, NameValueCollection data) { throw new NotImplementedException(); }
-		public TEntity Post(string uri, TEntity entity) { throw new NotImplementedException(); }
+		public TEntity Post(TEntity entity) { throw new NotImplementedException(); }
 		public IDownloadableEntity PostFile(string uri, string filePath) { throw new NotImplementedException(); }
 		public TEntity Put(string uri, TEntity entity) { throw new NotImplementedException(); }
 	}
