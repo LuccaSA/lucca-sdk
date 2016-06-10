@@ -1,5 +1,10 @@
 # Change log
 
+## 1.0.2 - Improvements for WS BI
+
+### New features
+ - Blabla...
+
 ## 1.0.1 - First use by  WS BI
 
 ### New features
