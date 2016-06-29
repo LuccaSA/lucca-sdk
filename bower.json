@@ -1,0 +1,28 @@
+{
+  "name": "lucca-sdk",
+  "homepage": "https://github.com/LuccaSA/lucca-sdk",
+  "authors": [
+    "lucienbertin <me@lucienbertin.com>"
+  ],
+  "description": "typescript framework to interface with lucca's api",
+  "main": "",
+  "keywords": [
+    "api",
+    "lucca",
+    "typescript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "devDependencies": {
+    "angular": "^1.5.7",
+    "angular-mocks": "^1.5.7",
+    "moment": "^2.13.0",
+    "underscore": "^1.8.3"
+  }
+}

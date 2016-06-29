@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"target": "ES5",
+		"module": "commonjs",
+		"removeComments": true,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true
+	},
+	"exclude": [
+		"node_modules",
+		"bower_components",
+		"dist"
+	],
+	"filesGlob": [
+		"**/*.ts",
+		"**/*.tsx",
+		"!**/*.spec.ts",
+		"!node_modules/**",
+		"!bower_components/**",
+		"!dist/**"
+	],
+	"atom": {
+		"rewriteTsconfig": false
+	},
+	"compileOnSave":false
+}

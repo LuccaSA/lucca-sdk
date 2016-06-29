@@ -13,3 +13,11 @@
 [Bb]in/
 packages/
 
+node_modules
+bower_components
+coverage
+junit-report.xml
+.tests
+.tscache
+tscommand-*
+typings
