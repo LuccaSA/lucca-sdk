@@ -15,9 +15,11 @@
   "ignore": [
     "**/.*",
     "node_modules",
+    "typings",
+    "coverage",
+    "CSharp",
     "bower_components",
-    "test",
-    "tests"
+    ".tests"
   ],
   "devDependencies": {
     "angular": "^1.5.7",
