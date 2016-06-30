@@ -1,4 +1,4 @@
-module Api.V3.Test {
+module Test {
 	@Api.V3.resource("TestServiceBogusClass")
 	class TestServiceBogusClass {
 

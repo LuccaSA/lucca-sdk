@@ -11,15 +11,15 @@ module.exports = function(config) {
 
 	// list of files / patterns to load in the browser
 	files: [
-		'./bower_components/angular/angular.js',
-		'./bower_components/angular-mocks/angular-mocks.js',
-		'./bower_components/moment/min/moment-with-locales.min.js',
-		'./bower_components/underscore/underscore-min.js',
+		'../bower_components/angular/angular.js',
+		'../bower_components/angular-mocks/angular-mocks.js',
+		'../bower_components/moment/min/moment-with-locales.min.js',
+		'../bower_components/underscore/underscore-min.js',
 		'.tests/**/*.js',
 	],
 	
 	preprocessors: {
-		'.tests/**/!(.spec).js': ['coverage'],
+		'.tests/**/!(spec).js': ['coverage'],
 	},
 
 	exclude: [],
@@ -39,7 +39,7 @@ module.exports = function(config) {
 	junitReporter: {
 		outputFile: 'junit-report.xml',
 		useBrowserName: false,
-		suite: 'Directory'
+		suite: 'lucca sdk'
 	},
 	coverageReporter: {
 		type : 'json',

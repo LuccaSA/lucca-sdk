@@ -1,4 +1,4 @@
-module Api.V3.Test {
+module Test {
 	@Api.V3.resource("BasicClass")
 	class BasicClass {
 		@Api.V3.apiField()
@@ -44,9 +44,9 @@ module Api.V3.Test {
 	}
 	@Api.V3.resource("HasAnEnum")
 	class HasAnEnum {
-		private static myEnum: EnumValue[] = [new EnumValue(0, "zero"), new EnumValue(1, "one"), new EnumValue(2, "two")]
+		private static myEnum: Api.V3.EnumValue[] = [new Api.V3.EnumValue(0, "zero"), new Api.V3.EnumValue(1, "one"), new Api.V3.EnumValue(2, "two")]
 		@Api.V3.apiField("enum", HasAnEnum.myEnum)
-		myEnum: EnumValue;
+		myEnum: Api.V3.EnumValue;
 	}
 	@Api.V3.resource("HasADuration")
 	class HasADuration {
@@ -278,7 +278,7 @@ module Api.V3.Test {
 			compositeClass = _.extend(basicClass, hasAMoment, hasADependencyWithAMoment);
 			basicDependencyWithExtractedId = new BasicDependencyWithExtractedId(); basicDependencyWithExtractedId.basicClass = basicClass;
 			hasAMoment = new HasAMoment(); hasAMoment.start = moment('1515-09-13');
-			hasAnEnum = new HasAnEnum(); hasAnEnum.myEnum = new EnumValue(2, "two");
+			hasAnEnum = new HasAnEnum(); hasAnEnum.myEnum = new Api.V3.EnumValue(2, "two");
 			hasADuration = new HasADuration(); hasADuration.duration = moment.duration("03:00:00");
 			hasADate = new HasADate(); hasADate.date = new Date("2014-01-01");
 			hasADependencyWithAMoment = new HasADependencyWithAMoment(); hasADependencyWithAMoment.hasAMoment = hasAMoment;
@@ -381,7 +381,7 @@ module Api.V3.Test {
 				expect(Api.V3.toApiData(HasAnEnum, hasAnEnum)).toEqual({});
 			});
 			it("should return an unknown key", () => {
-				hasAnEnum.myEnum = new EnumValue(4);
+				hasAnEnum.myEnum = new Api.V3.EnumValue(4);
 				expect(Api.V3.toApiData(HasAnEnum, hasAnEnum)).toEqual({ myEnum: 4 });
 			});
 		});
@@ -449,7 +449,7 @@ module Api.V3.Test {
 		});
 	});
 }
-module Api.V3.TestBis {
+module TestBis {
 	describe("resource decorator", () => {
 		it("should warn when two classes have the same name", () => {
 			spyOn(console, "warn");

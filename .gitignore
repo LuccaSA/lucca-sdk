@@ -13,11 +13,11 @@
 [Bb]in/
 packages/
 
-node_modules
 bower_components
-coverage
-junit-report.xml
-.tests
-.tscache
-tscommand-*
-typings
+Typescript/node_modules
+Typescript/coverage
+Typescript/junit-report.xml
+Typescript/.tests
+Typescript/.tscache
+Typescript/tscommand-*
+Typescript/typings

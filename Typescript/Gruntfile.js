@@ -41,7 +41,7 @@ module.exports = function(grunt) {
 			},
 			debug:{
 				src: [
-					"Typescript/**/*.ts",
+					"src/**/*.ts",
 					"typings/index.d.ts",
 				],
 				outDir: ".tests",
@@ -52,7 +52,7 @@ module.exports = function(grunt) {
 				configuration: "tslint-options.json"
 			},
 			files: {
-				src: [ "Typescript/**/*.ts", "!Typescript/**/*.spec.ts"]
+				src: [ "src/**/*.ts", "!src/**/*.spec.ts"]
 			}
 		},
 		remapIstanbul: {
@@ -69,7 +69,7 @@ module.exports = function(grunt) {
 				nospawn: true
 			},
 			debug: {
-				files: ["Typescript/**/*.ts"],
+				files: ["src/**/*.ts"],
 				tasks: ["ts:debug", "karma:debug", "tslint"],
 			}, 
 		},
