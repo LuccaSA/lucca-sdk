@@ -1,0 +1,22 @@
+{
+  "globalDependencies": {
+  },
+  "globalDevDependencies": {
+    "angular": "registry:dt/angular#1.5.0+20160602160139",
+    "angular-mocks": "registry:dt/angular-mocks#1.5.0+20160608104721",
+    "bluebird": "registry:dt/bluebird#2.0.0+20160319051630",
+    "express": "registry:dt/express#4.0.0+20160317120654",
+    "express-serve-static-core": "registry:dt/express-serve-static-core#0.0.0+20160602151406",
+    "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
+    "jquery": "registry:dt/jquery#1.10.0+20160417213236",
+    "karma": "registry:dt/karma#0.13.9+20160501125529",
+    "karma-jasmine": "registry:dt/karma-jasmine#0.0.0+20160316155526",
+    "log4js": "registry:dt/log4js#0.0.0+20160316155526",
+    "mime": "registry:dt/mime#0.0.0+20160316155526",
+    "moment": "registry:dt/moment#2.8.0+20160316155526",
+    "moment-node": "registry:dt/moment-node#2.11.1+20160511043338",
+    "node": "registry:dt/node#6.0.0+20160602155235",
+    "serve-static": "registry:dt/serve-static#0.0.0+20160501131543",
+    "underscore": "registry:dt/underscore#1.7.0+20160505190121"
+  }
+}
