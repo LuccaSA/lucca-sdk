@@ -88,11 +88,11 @@ module Api.V3 {
 			let url = this.getUrlToCall(apiUrl, "/" + id);
 			return this.callAndResolve(method, url);
 		}
-		protected deleteItemsAsync(data: any, apiUrl?: string): ng.IPromise<any> {
+		protected deleteItemsAsync(datas: { id: any }[], apiUrl?: string): ng.IPromise<any> {
 			let dfd = this.$q.defer();
 			let method = HttpMethod.DELETE;
 			let url = this.getUrlToCall(apiUrl, "");
-			let postableData = _.map(data, (item: any) => {
+			let postableData = _.map(datas, (item: { id: any }) => {
 				if (!!item.id) {
 					return { id: item.id };
 				}

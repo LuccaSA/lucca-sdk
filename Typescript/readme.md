@@ -196,7 +196,7 @@ The `Api.V3.resource` class decorator extracts the name of the class but not the
 
 ```ts
 module Lucca {
-	@Api.V3.resource
+	@Api.V3.resource()
 	class User { 
 		@apiField
 		id: number;
@@ -205,7 +205,7 @@ module Lucca {
 	}
 }
 module Timmi {
-	@Api.V3.resource
+	@Api.V3.resource()
 	class User { 
 		@apiField
 		id: number;
@@ -217,16 +217,41 @@ module Timmi {
 }
 ```
 
-## Generic service
-
-The module `Timmi.Service` exposes an abstract class `GenericService`. It exposes a set of methods to easily get an item or a collection from the api **V3**.
-
-### Extending `GenericeService`
-
-The `GenericService` need `$http` and `$q` to be injected so your service shoud at least look like this
+but you can specify a name different from the class name and make it work
 
 ```ts
-export class MyCustomService extends GenericService {
+module Lucca {
+	@Api.V3.resource("User")
+	class User { 
+		@apiField
+		id: number;
+		@apiResource("User")
+		manager: User
+	}
+}
+module Timmi {
+	@Api.V3.resource("TimmiUser")
+	class User { 
+		@apiField
+		id: number;
+		@apiResource("User") // the framework will use the class Lucca.User
+		manager: Lucca.User,
+		@apiResource("TimmiUser") // the framework will use the class Timmi.User
+		timmiManager: Timmi.User,
+	}
+}
+```Api.V3
+
+## Generic service
+
+The module `Api.V3` exposes an abstract class `Service`. It exposes a set of methods to easily get an item or a collection from the api **V3**.
+
+### Extending `Service`
+
+The `Service` needs `$http` and `$q` to be injected so your service shoud at least look like this
+
+```ts
+export class MyCustomService extends Service {
 	static $inject: Array<string> = ["$http", "$q"];
 
 	constructor($http: angular.IHttpService, $q: angular.IQService) {
@@ -239,7 +264,7 @@ You can also set the `mainApiUrl` in the constructor if your service will almost
 
 ### Using the methods
 
-`GenericService` provides these methods:
+`Service` provides these methods:
 
 ```ts
 protected getUniqItemAsync(types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any>
@@ -250,10 +275,12 @@ protected getCollectionAsync(types: any & any[], apiUrl?: string, fieldTypes?: a
 protected getCollectionByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any[]>
 
 protected postItemAsync(types: any & any[], data: any, apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any>
+protected postItemsAsync(types: any & any[], datas: any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any>
 
 protected putItemAsync(id: number, types: any & any[], data: any, apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any>
 
 protected deleteItemByIdAsync(id: number, apiUrl?: string): ng.IPromise<any>
+protected deleteItemsAsync(datas: { id: number | string }[], apiUrl?: string): ng.IPromise<any>
 ```
 
 If no `apiUrl` is provided, it will use the `mainApiUrl`
@@ -288,7 +315,7 @@ getUniqItemAsync([Foo, Bar], "/api/v3/foobar");
 
 ### Casting the returned promise
 
-The promise returnd by the `GenericService` are of type `ng.Ipromise<any>` or `ng.Ipromise<any[]>` but you can cast the `any` part to whatever class you want and it is recommended of you to do so if you know what kind of object the api will return.
+The promise returnd by the `Service` are of type `ng.Ipromise<any>` or `ng.Ipromise<any[]>` but you can cast the `any` part to whatever class you want and it is recommended of you to do so if you know what kind of object the api will return.
 
 ```ts
 @resource
