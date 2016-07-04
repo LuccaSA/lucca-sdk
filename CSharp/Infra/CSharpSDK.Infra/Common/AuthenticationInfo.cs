@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lucca.CSharpSDK.Infra.Common
 {
-	public enum AuthenticationType { User, Application };
+	public enum AuthenticationType { User, Application, WebService };
 
 	public class AuthenticationInfo
 	{
