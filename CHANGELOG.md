@@ -4,6 +4,7 @@
 
 ### New features
  - the typescript framework to query the api, see the [readme](https://github.com/LuccaSA/lucca-sdk/tree/master/Typescript) for more info
+ - support for AuthenticationType "webservice"
 
 ## 1.0.2 - RDD and ApiService
 
