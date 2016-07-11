@@ -13,6 +13,5 @@ namespace Lucca.CSharpSDK.Domain.Models.Organization
 	{
 		public override int Id { get; set; }
 		public override string Name { get; set; }
-		public long BudgetInsightBankAccountId { get; set; }
 	}
 }
