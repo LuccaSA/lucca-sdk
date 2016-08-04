@@ -30,7 +30,7 @@ namespace Lucca.CSharpSDK.Infra.v2
 
 		public IEnumerable<TEntity> Get(Query<TEntity> query)
 		{
-			using (var wc = new WebClient())
+			using (var wc = Resolver.Current().Resolve<IWebClientFactory>().Create())
 			{
 				// Disable cache
 				wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
