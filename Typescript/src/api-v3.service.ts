@@ -28,7 +28,7 @@ module Api.V3 {
 		protected getUniqItemAsync(types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("", types, apiUrl, fieldTypes);
 		}
-		protected getItemByIdAsync(id: number, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
+		protected getItemByIdAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("/" + id, types, apiUrl, fieldTypes);
 		}
 		protected getItemByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
