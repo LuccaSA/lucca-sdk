@@ -28,7 +28,7 @@ module Api.V3 {
 		protected getUniqItemAsync(types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("", types, apiUrl, fieldTypes);
 		}
-		protected getItemByIdAsync(id: number, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
+		protected getItemByIdAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("/" + id, types, apiUrl, fieldTypes);
 		}
 		protected getItemByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
@@ -78,6 +78,27 @@ module Api.V3 {
 			let url = this.getUrlToCall(apiUrl, "/" + id, fieldTypes || types);
 			let postableData = Api.V3.toApiData(types, data);
 			return this.callAndTransformItem(method, url, types, postableData);
+		}
+
+		protected putItemsAsync(types: any & any[], datas: any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
+			let method = HttpMethod.PUT;
+			let url = this.getUrlToCall(apiUrl, "", fieldTypes || types);
+			let postableData =  _.map(datas, (data: any) => {
+				return Api.V3.toApiData(types, data);
+			});
+			if (!postableData.length) {
+				let dfd = this.$q.defer();
+				dfd.resolve();
+				return dfd.promise;
+			} else if (_.every(postableData, (data: any) => {
+				return _.has(data, "id");
+			})) {
+				return this.callAndTransformCollection(method, url, types, postableData);
+			} else {
+				let dfd = this.$q.defer();
+				dfd.reject(<Api.V3.ResponseError>{ Message: "You have to provide an id for each item." });
+				return dfd.promise;
+			}
 		}
 
 		/////////////////////
