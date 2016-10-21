@@ -67,14 +67,18 @@ module Test {
 	let responseItemEmpty: Api.V3.ResponseItem<any>;
 	let responseCollection: Api.V3.ResponseCollection<any>;
 	let responseCollectionEmpty: Api.V3.ResponseCollection<any>;
+	let $rootScope: angular.IRootScopeService;
+	let $q: angular.IQService
 	describe("api.v3.service", () => {
 		let $httpBackend: angular.IHttpBackendService;
 		let service: TestService;
 		beforeEach(angular.mock.module("apiV3Test"));
 		beforeEach(() => {
-			inject((testService: TestService, _$httpBackend_: angular.IHttpBackendService) => {
+			inject((testService: TestService, _$httpBackend_: angular.IHttpBackendService, _$rootScope_: angular.IRootScopeService, _$q_: angular.IQService) => {
 				$httpBackend = _$httpBackend_;
 				service = testService;
+				$rootScope = _$rootScope_;
+				$q = _$q_;
 			});
 			spyOn(bogus, "hasResolved");
 			spyOn(bogus, "hasRejected");
@@ -230,21 +234,67 @@ module Test {
 				});
 			});
 			describe("getItemByIdSafeAsync", () => {
-				it("should call getItemByFilterAsync", () => {
-					spyOn(service, "getItemByFilterAsync");
+				let dfd;
+				beforeEach(() => {
+					dfd = $q.defer();
+					spyOn(service, "getCollectionByFilterAsync").and.returnValue(dfd.promise);
+				});
+
+				it("should call getCollectionByFilterAsync", () => {
 					service.getItemByIdSafeAsync(12, TestServiceBogusClass);
-					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, undefined);
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, undefined);
 				});
 				it("should call getItemByFilterAsync with the right apiUrl", () => {
-					spyOn(service, "getItemByFilterAsync");
 					let bogusApi = "/api/v3/bogus";
 					service.getItemByIdSafeAsync(12, TestServiceBogusClass, bogusApi);
-					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, bogusApi, undefined);
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, bogusApi, undefined);
 				});
 				it("should call getItemByFilterAsync with the right fieldTypes", () => {
-					spyOn(service, "getItemByFilterAsync");
 					service.getItemByIdSafeAsync(12, TestServiceBogusClass, undefined, TestServiceFooClass);
-					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, TestServiceFooClass);
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, TestServiceFooClass);
+				});
+
+				it("should return 'undefined' when getCollectionByFilterAsync returns an empty array", () => {
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass)
+						.then((item: any) => {
+							bogus.hasResolved();
+							expect(item).toBe(undefined);
+						});
+
+					dfd.resolve([]);
+					$rootScope.$apply();
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalled();
+					expect(bogus.hasResolved).toHaveBeenCalled();
+				});
+				it("should return the only object of the array returned by getCollectionByFilterAsync when it returns a array with 1 element", () => {
+					let arrayWithOneElement = [{ id: 12 }];
+
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass)
+						.then((item: any) => {
+							bogus.hasResolved();
+							expect(item).toBeDefined();
+							expect(item).toBe(arrayWithOneElement[0]);
+						});
+
+					dfd.resolve(arrayWithOneElement);
+					$rootScope.$apply();
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalled();
+					expect(bogus.hasResolved).toHaveBeenCalled();
+				});
+				it("should return the first object of the array returned by getCollectionByFilterAsync when it returns a array with more than 1 element", () => {
+					let arrayWithNElements = [{ id: 12 }, { id: 13 }];
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass)
+						.then((item: any) => {
+							bogus.hasResolved();
+							expect(item).toBeDefined();
+							expect(item.constructor === Array).toBeFalsy();
+							expect(item).toBe(_.first(arrayWithNElements));
+						});
+
+					dfd.resolve(arrayWithNElements);
+					$rootScope.$apply();
+					expect(service.getCollectionByFilterAsync).toHaveBeenCalled();
+					expect(bogus.hasResolved).toHaveBeenCalled();
 				});
 			});
 
