@@ -31,6 +31,9 @@ module Api.V3 {
 		protected getItemByIdAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("/" + id, types, apiUrl, fieldTypes);
 		}
+		protected getItemByIdSafeAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
+			return this.getItemByFilterAsync("id=" + id, types, apiUrl, fieldTypes);
+		}
 		protected getItemByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			let method = HttpMethod.GET;
 			if (!!filter && filter.substring(0, 1) !== "/") {

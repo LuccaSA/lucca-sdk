@@ -24,6 +24,9 @@ module Test {
 		public getItemByIdAsync(id: number, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return super.getItemByIdAsync(id, types, apiUrl, fieldTypes);
 		}
+		public getItemByIdSafeAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
+			return super.getItemByIdSafeAsync(id, types, apiUrl, fieldTypes);
+		}
 		public getItemByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return super.getItemByFilterAsync(filter, types, apiUrl, fieldTypes);
 		}
@@ -224,6 +227,24 @@ module Test {
 					spyOn(service, "getItemByFilterAsync");
 					service.getItemByIdAsync(12, TestServiceBogusClass, undefined, TestServiceFooClass);
 					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("/12", TestServiceBogusClass, undefined, TestServiceFooClass);
+				});
+			});
+			describe("getItemByIdSafeAsync", () => {
+				it("should call getItemByFilterAsync", () => {
+					spyOn(service, "getItemByFilterAsync");
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass);
+					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, undefined);
+				});
+				it("should call getItemByFilterAsync with the right apiUrl", () => {
+					spyOn(service, "getItemByFilterAsync");
+					let bogusApi = "/api/v3/bogus";
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass, bogusApi);
+					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, bogusApi, undefined);
+				});
+				it("should call getItemByFilterAsync with the right fieldTypes", () => {
+					spyOn(service, "getItemByFilterAsync");
+					service.getItemByIdSafeAsync(12, TestServiceBogusClass, undefined, TestServiceFooClass);
+					expect(service.getItemByFilterAsync).toHaveBeenCalledWith("id=12", TestServiceBogusClass, undefined, TestServiceFooClass);
 				});
 			});
 
