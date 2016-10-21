@@ -1,5 +1,11 @@
 # Change log
 
+## 1.0.4 - Typescript framework update
+
+### New features
+ - added method `getItemByIdSafeAsync` that returns `undefined` even if the api returns a 404
+ - `putItemAsync` `id` parameter now `number | string` instead of `number`
+
 ## 1.0.3 - Typescript framework
 
 ### New features
