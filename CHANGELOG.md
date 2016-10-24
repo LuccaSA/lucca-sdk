@@ -2,7 +2,7 @@
 
 ## 1.0.5 - Typescript framework fix
 
-### New features
+### Bug fix
  - `postItemAsync` doesn't call `postItemsAsync` cuz not every api supports collection posted
 
 ## 1.0.4 - Typescript framework update
