@@ -38,6 +38,7 @@ module.exports = function(grunt) {
 			options:{
 				experimentalDecorators: true,
 				emitDecoratorMetadata: true,
+				fast: "never",
 			},
 			debug:{
 				src: [

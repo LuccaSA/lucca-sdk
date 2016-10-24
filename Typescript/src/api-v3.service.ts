@@ -34,8 +34,9 @@ module Api.V3 {
 		protected getItemByIdSafeAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getCollectionByFilterAsync("id=" + id, types, apiUrl, fieldTypes)
 				.then((data) => {
-					if (!data || data.length === 0)
+					if (!data || data.length === 0) {
 						return undefined;
+					}
 					return _.first(data);
 				});
 		}
@@ -67,7 +68,10 @@ module Api.V3 {
 		// POST ITEM       //
 		/////////////////////
 		protected postItemAsync(types: any & any[], data: any, apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
-			return this.postItemsAsync(types, [data], apiUrl, fieldTypes);
+			let method = HttpMethod.POST;
+			let url = this.getUrlToCall(apiUrl, "", fieldTypes || types);
+			let postableData = Api.V3.toApiData(types, data);
+			return this.callAndTransformItem(method, url, types, postableData);
 		}
 		protected postItemsAsync(types: any & any[], datas: any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			let method = HttpMethod.POST;

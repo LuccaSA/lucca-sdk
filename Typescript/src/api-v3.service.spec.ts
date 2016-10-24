@@ -431,11 +431,114 @@ module Test {
 				beforeEach(() => {
 					data = {};
 				});
-				it("should call postItemSAsync", () => {
-					let api = "/excellent";
-					spyOn(service, "postItemsAsync");
-					service.postItemAsync(TestServiceBogusClass, data, api, TestServiceFooClass);
-					expect(service.postItemsAsync).toHaveBeenCalledWith(TestServiceBogusClass, [data], api, TestServiceFooClass);
+				it("should call getApiFields() before doing the http bit", () => {
+					spyOn(Api.V3, "getApiFields");
+					service.postItemAsync(TestServiceBogusClass, data);
+					expect(Api.V3.getApiFields).toHaveBeenCalledWith(TestServiceBogusClass);
+				});
+				it("should call getApiFields on the right types", () => {
+					spyOn(Api.V3, "getApiFields");
+					service.postItemAsync(TestServiceBogusClass, data, undefined, TestServiceFooClass);
+					expect(Api.V3.getApiFields).toHaveBeenCalledWith(TestServiceFooClass);
+				});
+				it("should call toApiData() before doing the http bit", () => {
+					spyOn(Api.V3, "toApiData");
+					service.postItemAsync(TestServiceBogusClass, data);
+					expect(Api.V3.toApiData).toHaveBeenCalled();
+					expect(Api.V3.toApiData).toHaveBeenCalledWith(TestServiceBogusClass, data);
+				});
+				it("should call toApiData on the right types", () => {
+					spyOn(Api.V3, "toApiData");
+					service.postItemAsync(TestServiceBogusClass, data, undefined, TestServiceFooClass);
+					expect(Api.V3.toApiData).toHaveBeenCalledWith(TestServiceBogusClass, data);
+				});
+				it("should call fromApiData() after the http bit", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.postItemAsync(TestServiceBogusClass, data);
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItemEmpty);
+					$httpBackend.flush();
+					expect(Api.V3.fromApiData).toHaveBeenCalledWith(TestServiceBogusClass, undefined);
+				});
+				it("should call fromApiData() with the right types after the http bit", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.postItemAsync(TestServiceBogusClass, data, undefined, TestServiceFooClass);
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItemEmpty);
+					$httpBackend.flush();
+					expect(Api.V3.fromApiData).toHaveBeenCalledWith(TestServiceBogusClass, undefined);
+				});
+				it("should callfromApiData with the response data", () => {
+					spyOn(Api.V3, "fromApiData")
+					let responseData = { id: 1, name: "bogus" };
+					let responseItem = new Api.V3.ResponseItem<any>();
+					responseItem.data = responseData;
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItem);
+					service.postItemAsync(TestServiceBogusClass, data);
+					$httpBackend.flush();
+					expect(Api.V3.fromApiData).toHaveBeenCalledWith(TestServiceBogusClass, responseData);
+				});
+				it("should resolve when everything goes right", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.postItemAsync(TestServiceBogusClass, data)
+					.then(bogus.hasResolved, bogus.hasRejected);
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItemEmpty);
+					$httpBackend.flush();
+					expect(Api.V3.fromApiData).toHaveBeenCalled();
+					expect(bogus.hasResolved).toHaveBeenCalled();
+					expect(bogus.hasRejected).not.toHaveBeenCalled();
+				});
+				it("should reject if the http fails, and not call fromApiData", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.postItemAsync(TestServiceBogusClass, data)
+					.then(bogus.hasResolved, (message: string) => {
+						bogus.hasRejected();
+						expect(message).toBe(responseError.Message);
+					})
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(500, responseError);
+					$httpBackend.flush();
+					expect(Api.V3.fromApiData).not.toHaveBeenCalled();
+					expect(bogus.hasResolved).not.toHaveBeenCalled();
+					expect(bogus.hasRejected).toHaveBeenCalled();
+				});
+				it("should post the right data", () => {
+					spyOn(Api.V3, "toApiData").and.returnValue({ name: "bogus" });
+					service.postItemAsync(TestServiceBogusClass, data);
+					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond((method: string, url: string, postedJSON: string) => {
+						bogus.hasPosted();
+						let postedData = angular.fromJson(postedJSON);
+						expect(postedData).toEqual({ name: "bogus" });
+						return [500, responseError];
+					});
+					$httpBackend.flush();
+					expect(bogus.hasPosted).toHaveBeenCalled();
+				});
+				it("should call the apiUrl specified if any", () => {
+					service.postItemAsync(TestServiceBogusClass, data, "/api/v3/bogus");
+					$httpBackend.expectPOST(/api\/v3\/bogus/i).respond(500, responseError);
+					expect($httpBackend.flush).not.toThrow;
+				});
+				it("should use the right fields", () => {
+					spyOn(Api.V3, "getApiFields").and.callFake((types: any & any[]) => {
+						if (types === TestServiceBogusClass) {
+							return "bogus,fields";
+						}
+						if (types === TestServiceFooClass) {
+							return "foo,fields";
+						}
+						return "";
+					});
+					let fieldsCalled = [];
+					$httpBackend.whenPOST((url: string) => {
+						let splitUrl = url.substring(1).split("fields=");
+						fieldsCalled.push(splitUrl[1]);
+						return true;
+					}).respond(500, responseError);
+					service.postItemAsync(() => { }, data);
+					service.postItemAsync(TestServiceBogusClass, data);
+					service.postItemAsync(TestServiceFooClass, data);
+					$httpBackend.flush();
+					expect(fieldsCalled[0]).toBe("");
+					expect(fieldsCalled[1]).toBe("bogus,fields");
+					expect(fieldsCalled[2]).toBe("foo,fields");
 				});
 			});
 			describe("postItemsAsync", () => {
