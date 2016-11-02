@@ -31,8 +31,9 @@ module Api.V3 {
 		protected getItemByIdAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return this.getItemByFilterAsync("/" + id, types, apiUrl, fieldTypes);
 		}
-		protected getItemByIdSafeAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
-			return this.getCollectionByFilterAsync("id=" + id, types, apiUrl, fieldTypes)
+		protected getItemByIdSafeAsync(id: number | string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[], filters?: string): ng.IPromise<any> {
+			return this.getCollectionByFilterAsync("id=" + id + ((filters === undefined) ? "" : "&" + filters),
+													types, apiUrl, fieldTypes)
 				.then((data) => {
 					if (!data || data.length === 0) {
 						return undefined;
