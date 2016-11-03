@@ -36,6 +36,9 @@ module Test {
 		public getCollectionByFilterAsync(filter: string, types: any & any[], apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any[]> {
 			return super.getCollectionByFilterAsync(filter, types, apiUrl, fieldTypes);
 		}
+		public getCollectionCountByFilterAsync(filter: string, apiUrl?: string): ng.IPromise<number> {
+			return super.getCollectionCountByFilterAsync(filter, apiUrl);
+		}
 		public postItemAsync(types: any & any[], data: any, apiUrl?: string, fieldTypes?: any & any[]): ng.IPromise<any> {
 			return super.postItemAsync(types, data, apiUrl, fieldTypes);
 		}
@@ -63,10 +66,10 @@ module Test {
 		hasPosted: () => { },
 		hasDeleted: () => { },
 	};
-	let responseError: Api.V3.ResponseError;
-	let responseItemEmpty: Api.V3.ResponseItem<any>;
-	let responseCollection: Api.V3.ResponseCollection<any>;
-	let responseCollectionEmpty: Api.V3.ResponseCollection<any>;
+	let responseError: Api.V3.IResponseError;
+	let responseItemEmpty: Api.V3.IResponseItem<any>;
+	let responseCollection: Api.V3.IResponseCollection<any>;
+	let responseCollectionEmpty: Api.V3.IResponseCollection<any>;
 	let $rootScope: angular.IRootScopeService;
 	let $q: angular.IQService
 	describe("api.v3.service", () => {
@@ -84,13 +87,13 @@ module Test {
 			spyOn(bogus, "hasRejected");
 			spyOn(bogus, "hasPosted");
 			spyOn(bogus, "hasDeleted");
-			responseError = new Api.V3.ResponseError();
+			responseError = {};
 			responseError.Message = "bogus";
-			responseItemEmpty = new Api.V3.ResponseItem();
-			responseCollection = new Api.V3.ResponseCollection();
-			responseCollection.data = { items: [{}] };
-			responseCollectionEmpty = new Api.V3.ResponseCollection();
-			responseCollectionEmpty.data = { items: [] };
+			responseItemEmpty = {};
+			responseCollection = {};
+			responseCollection.data = { items: [{}], count: 1 };
+			responseCollectionEmpty = {};
+			responseCollectionEmpty.data = { items: [], count: 0 };
 		});
 		describe("GET", () => {
 			// GET ITEM
@@ -122,7 +125,7 @@ module Test {
 				it("should callfromApiData with the response data", () => {
 					spyOn(Api.V3, "fromApiData")
 					let data = { id: 1, name: "bogus" };
-					let responseItem = new Api.V3.ResponseItem<any>();
+					let responseItem: Api.V3.IResponseItem<any> = {};
 					responseItem.data = data;
 					$httpBackend.expectGET(/api\/v3\/mainapi/i).respond(200, responseItem);
 					service.getItemByFilterAsync("", TestServiceBogusClass);
@@ -334,7 +337,7 @@ module Test {
 				it("should callfromApiData with the response data", () => {
 					spyOn(Api.V3, "fromApiData")
 					let item = { id: 1, name: "bogus" };
-					let myResponseCollection = new Api.V3.ResponseCollection<any>();
+					let myResponseCollection: Api.V3.IResponseCollection<any> = {};
 					myResponseCollection.data = { items: [item] };
 					$httpBackend.expectGET(/api\/v3\/mainapi/i).respond(200, myResponseCollection);
 					service.getCollectionByFilterAsync("", TestServiceBogusClass);
@@ -424,6 +427,55 @@ module Test {
 					expect(service.getCollectionByFilterAsync).toHaveBeenCalledWith("", TestServiceBogusClass, undefined, TestServiceFooClass);
 				});
 			});
+			describe("getCollectionCountByFilterAsync", () => {
+				it("should resolve when everything goes right", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.getCollectionCountByFilterAsync("")
+					.then(bogus.hasResolved, bogus.hasRejected);
+					$httpBackend.expectGET(/api\/v3\/mainapi/i).respond(200, responseCollectionEmpty);
+					$httpBackend.flush();
+					expect(bogus.hasResolved).toHaveBeenCalled();
+					expect(bogus.hasRejected).not.toHaveBeenCalled();
+				});
+				it("should reject if the http fails, and not call fromApiData", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.getCollectionCountByFilterAsync("")
+					.then(bogus.hasResolved, (message: string) => {
+						bogus.hasRejected();
+						expect(message).toBe(responseError.Message);
+					})
+					$httpBackend.expectGET(/api\/v3\/mainapi/i).respond(500, responseError);
+					$httpBackend.flush();
+					expect(bogus.hasResolved).not.toHaveBeenCalled();
+					expect(bogus.hasRejected).toHaveBeenCalled();
+				});
+				it("should resolve with the count", () => {
+					spyOn(Api.V3, "fromApiData");
+					service.getCollectionCountByFilterAsync("")
+					.then((cnt: number) => {
+						bogus.hasResolved();
+						expect(cnt).toBe(responseCollection.data.count)
+					});
+					$httpBackend.expectGET(/api\/v3\/mainapi/i).respond(200, responseCollection);
+					$httpBackend.flush();
+					expect(bogus.hasResolved).toHaveBeenCalled();
+				});
+				it("should call with the right fields", () => {
+					service.getCollectionCountByFilterAsync("");
+					$httpBackend.expectGET(/api\/v3\/mainapi\?fields=collection\.count/i).respond(500, responseError);
+					expect($httpBackend.flush).not.toThrow;
+				});
+				it("should call with the right filter", () => {
+					service.getCollectionCountByFilterAsync("bogus=excellent");
+					$httpBackend.expectGET(/api\/v3\/mainapi\?bogus=excellent\&fields=collection\.count/i).respond(500, responseError);
+					expect($httpBackend.flush).not.toThrow;
+				});
+				it("should call the apiUrl specified if any", () => {
+					service.getCollectionCountByFilterAsync("", "/api/v3/bogus");
+					$httpBackend.expectGET(/api\/v3\/bogus/i).respond(500, responseError);
+					expect($httpBackend.flush).not.toThrow;
+				});
+			});
 		});
 		describe("POST", () => {
 			describe("postItemAsync", () => {
@@ -469,7 +521,7 @@ module Test {
 				it("should callfromApiData with the response data", () => {
 					spyOn(Api.V3, "fromApiData")
 					let responseData = { id: 1, name: "bogus" };
-					let responseItem = new Api.V3.ResponseItem<any>();
+					let responseItem: Api.V3.IResponseItem<any> = {};
 					responseItem.data = responseData;
 					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItem);
 					service.postItemAsync(TestServiceBogusClass, data);
@@ -585,7 +637,7 @@ module Test {
 				it("should callfromApiData with the response data", () => {
 					spyOn(Api.V3, "fromApiData")
 					let responseData = { id: 1, name: "bogus" };
-					let responseItem = new Api.V3.ResponseItem<any>();
+					let responseItem: Api.V3.IResponseItem<any> = {};
 					responseItem.data = responseData;
 					$httpBackend.expectPOST(/api\/v3\/mainapi/i).respond(200, responseItem);
 					service.postItemsAsync(TestServiceBogusClass, data);
@@ -701,7 +753,7 @@ module Test {
 				it("should callfromApiData with the response data", () => {
 					spyOn(Api.V3, "fromApiData")
 					let responseData = { id: 1, name: "bogus" };
-					let responseItem = new Api.V3.ResponseItem<any>();
+					let responseItem: Api.V3.IResponseItem<any> = {};
 					responseItem.data = responseData;
 					$httpBackend.expectPUT(/api\/v3\/mainapi/i).respond(200, responseItem);
 					service.putItemAsync(12, TestServiceBogusClass, data);

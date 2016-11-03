@@ -1,32 +1,20 @@
 module Api.V3 {
 	"use strict";
-	export class ResponseCollection<T> {
-		public data: {
-			items: T[]
+	export interface IResponseCollection<T> {
+		data?: {
+			count?: number;
+			items?: T[]
 		};
-		/* tslint:disable */
-		private header: Header;
-		/* tslint:enable */
 	}
 
-	export class ResponseItem<T> {
-		public data: T;
-		/* tslint:disable */
-		private header: Header;
-		/* tslint:enable */
+	export interface IResponseItem<T> {
+		data?: T;
 	}
-	export class ResponseError {
+	export interface IResponseError {
 		/* tslint:disable */
-		public Status: number;
-		public Message: string;
+		Status?: number;
+		Message?: string;
 		/* tslint:enable */
-	}
-
-	class Header {
-		public generated: string;
-		public serverTime: number;
-		public queryTime: number;
-		public principal: string;
 	}
 
 	export class EnumValue {
