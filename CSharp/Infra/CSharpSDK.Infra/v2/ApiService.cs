@@ -1,4 +1,6 @@
 ﻿using Lucca.CSharpSDK.Domain;
+using Lucca.CSharpSDK.Infra.Common;
+using Lucca.CSharpSDK.Infra.Extensions;
 using Newtonsoft.Json;
 using RDD.Domain;
 using RDD.Domain.Contexts;
@@ -6,14 +8,8 @@ using RDD.Domain.Exceptions;
 using RDD.Domain.Models.Querying;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Cache;
-using System.Text;
-using System.Threading.Tasks;
-using Lucca.CSharpSDK.Infra.Extensions;
-using System.Collections.Specialized;
-using Lucca.CSharpSDK.Infra.Common;
 
 namespace Lucca.CSharpSDK.Infra.v2
 {
@@ -34,6 +30,11 @@ namespace Lucca.CSharpSDK.Infra.v2
 			{
 				// Disable cache
 				wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+				foreach (var key in query.Headers.RawHeaders.AllKeys)
+				{
+					wc.Headers.Add(key, query.Headers.RawHeaders[key]);
+				}
 				wc.Headers.Add("Authorization", String.Format("Lucca {0}={1}", _settings.AuthenticationInfo.Type.ToString().ToLower(), _settings.AuthenticationInfo.Token));
 
 				var logger = Resolver.Current().Resolve<ILogService>();
@@ -75,12 +76,23 @@ namespace Lucca.CSharpSDK.Infra.v2
 
 		public IEnumerable<TEntity> GetAll()
 		{
-			return Get(new Query<TEntity>());
+			return GetAll(new Query<TEntity>());
 		}
 
-		public TEntity GetById(string uri) { throw new NotImplementedException(); }
-		public TEntity Post(TEntity entity) { throw new NotImplementedException(); }
+		public IEnumerable<TEntity> GetAll(Query<TEntity> query)
+		{
+			return Get(query);
+		}
+
+		public TEntity GetById(string uri) { return GetById(uri, new Query<TEntity>()); }
+		public TEntity GetById(string uri, Query<TEntity> query) { throw new NotImplementedException(); }
+
+		public TEntity Post(TEntity entity) { return Post(entity, new Query<TEntity>()); }
+		public TEntity Post(TEntity entity, Query<TEntity> query) { throw new NotImplementedException(); }
+
 		public IDownloadableEntity PostFile(string uri, string filePath) { throw new NotImplementedException(); }
-		public TEntity Put(string uri, TEntity entity) { throw new NotImplementedException(); }
+
+		public TEntity Put(string uri, TEntity entity) { return Put(uri, entity, new Query<TEntity>()); }
+		public TEntity Put(string uri, TEntity entity, Query<TEntity> query) { throw new NotImplementedException(); }
 	}
 }
