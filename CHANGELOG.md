@@ -1,5 +1,10 @@
 # Change log
 
+## 1.1.0 - RDD and ApiService
+
+### New features
+ - `ApiService` (v2 & v3) methods accept a `Query<T>` parameter - thus allowing custom headers to be passed to the `WebClient` through `Query.Headers`
+
 ## 1.0.5 - Typescript framework fix
 
 ### Bug fix
