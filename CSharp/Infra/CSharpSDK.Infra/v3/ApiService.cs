@@ -1,19 +1,17 @@
 ﻿using Lucca.CSharpSDK.Domain;
 using Lucca.CSharpSDK.Infra.Common;
+using Lucca.CSharpSDK.Infra.Extensions;
 using Newtonsoft.Json;
 using RDD.Domain;
 using RDD.Domain.Contexts;
 using RDD.Domain.Exceptions;
+using RDD.Domain.Helpers;
 using RDD.Domain.Models.Querying;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Linq;
 using System.Net;
 using System.Net.Cache;
 using System.Text;
-using System.Threading.Tasks;
-using Lucca.CSharpSDK.Infra.Extensions;
 
 namespace Lucca.CSharpSDK.Infra.v3
 {
@@ -34,6 +32,11 @@ namespace Lucca.CSharpSDK.Infra.v3
 			{
 				// Disable cache
 				wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+				foreach (var key in query.Headers.RawHeaders.AllKeys)
+				{
+					wc.Headers.Add(key, query.Headers.RawHeaders[key]);
+				}
 				wc.Headers.Add("Authorization", String.Format("Lucca {0}={1}", _settings.AuthenticationInfo.Type.ToString().ToLower(), _settings.AuthenticationInfo.Token));
 
 				var logger = Resolver.Current().Resolve<ILogService>();
@@ -75,15 +78,30 @@ namespace Lucca.CSharpSDK.Infra.v3
 
 		public IEnumerable<TEntity> GetAll()
 		{
-			return Get(new Query<TEntity>());
+			return GetAll(new Query<TEntity>());
+		}
+
+		public IEnumerable<TEntity> GetAll(Query<TEntity> query)
+		{
+			return Get(query);
 		}
 
 		public TEntity GetById(string uri)
+		{
+			return GetById(uri, new Query<TEntity>());
+		}
+
+		public TEntity GetById(string uri, Query<TEntity> query)
 		{
 			using (var wc = Resolver.Current().Resolve<IWebClientFactory>().Create())
 			{
 				// Disable cache
 				wc.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
+
+				foreach (var key in query.Headers.RawHeaders.AllKeys)
+				{
+					wc.Headers.Add(key, query.Headers.RawHeaders[key]);
+				}
 				wc.Headers.Add("Authorization", String.Format("Lucca {0}={1}", _settings.AuthenticationInfo.Type.ToString().ToLower(), _settings.AuthenticationInfo.Token));
 
 				var logger = Resolver.Current().Resolve<ILogService>();
@@ -121,14 +139,27 @@ namespace Lucca.CSharpSDK.Infra.v3
 
 		public TEntity Post(TEntity entity)
 		{
-			return PostOrPut("POST", _baseUri.ToString(), entity);
-		}
-		public TEntity Put(string uri, TEntity entity)
-		{
-			return PostOrPut("PUT", uri, entity);
+			return Post(entity, new Query<TEntity>());
 		}
 
-		private TEntity PostOrPut(string httpVerb, string fullUrl, TEntity entity)
+		public TEntity Post(TEntity entity, Query<TEntity> query)
+		{
+			query.Verb = HttpVerb.POST;
+			return PostOrPut(query, _baseUri.ToString(), entity);
+		}
+
+		public TEntity Put(string uri, TEntity entity)
+		{
+			return Put(uri, entity, new Query<TEntity>());
+		}
+
+		public TEntity Put(string uri, TEntity entity, Query<TEntity> query)
+		{
+			query.Verb = HttpVerb.PUT;
+			return PostOrPut(query, uri, entity);
+		}
+
+		private TEntity PostOrPut(Query<TEntity> query, string fullUrl, TEntity entity)
 		{
 			// Do no serialize NULL values so deserialiser does NOT try to set them
 			// (eg: url property which is read only)
@@ -139,17 +170,20 @@ namespace Lucca.CSharpSDK.Infra.v3
 
 			var bytes = Encoding.ASCII.GetBytes(json);
 
-			return CallAPI(client => client.UploadData(fullUrl, httpVerb, bytes), String.Format("{0} {1} with JSON body {2}.", httpVerb, fullUrl, json));
+			return CallAPI(client => client.UploadData(fullUrl, query.Verb.ToString(), bytes), String.Format("{0} {1} with JSON body {2}.", query.Verb.ToString(), fullUrl, json), query);
 		}
 
-		private TEntity CallAPI(Func<IWebClient, byte[]> action, string actionDescription, string contentType = "application/json")
+		private TEntity CallAPI(Func<IWebClient, byte[]> action, string actionDescription, Query<TEntity> query, string contentType = "application/json")
 		{
 			using (var client = Resolver.Current().Resolve<IWebClientFactory>().Create())
 			{
 				// Disable cache
 				client.CachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
 
-				// Logged in as passepartout for now...
+				foreach (var key in query.Headers.RawHeaders.AllKeys)
+				{
+					client.Headers.Add(key, query.Headers.RawHeaders[key]);
+				}
 				client.Headers.Add("Authorization", String.Format("Lucca {0}={1}", _settings.AuthenticationInfo.Type.ToString().ToLower(), _settings.AuthenticationInfo.Token));
 
 				// Required by Lucca

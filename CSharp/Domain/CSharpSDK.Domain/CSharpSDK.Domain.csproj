@@ -49,13 +49,11 @@
       <HintPath>..\..\packages\Newtonsoft.Json.7.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="NExtends, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\NExtends.1.0.3\lib\net451\NExtends.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="NExtends, Version=1.0.11.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\NExtends.1.0.11\lib\net451\NExtends.dll</HintPath>
     </Reference>
     <Reference Include="RDD.Domain, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\RDD.Domain.1.0.10.1\lib\net451\RDD.Domain.dll</HintPath>
-      <Private>True</Private>
+      <HintPath>..\..\packages\RDD.Domain.1.1.3\lib\net461\RDD.Domain.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
