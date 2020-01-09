@@ -227,7 +227,7 @@ module Api.V3 {
 		}
 		if (moment.isDuration(value)) {
 			let formattedValue: string = "";
-			let days: number = value.days();
+			let days: number = Math.floor(Math.abs(value.asDays()));
 			// Handle negative values
 			if (value.asMilliseconds() < 0) {
 				formattedValue = "-";
