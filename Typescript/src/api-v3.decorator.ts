@@ -237,7 +237,7 @@ module Api.V3 {
 				formattedValue += days + ".";
 				value = value.subtract(moment.duration(days, "days"));
 			}
-			formattedValue += moment().startOf("day").add(value).format("HH:mm:ss");
+			formattedValue += moment.utc(value.asMilliseconds()).format("HH:mm:ss");
 			return formattedValue;
 		}
 	}
