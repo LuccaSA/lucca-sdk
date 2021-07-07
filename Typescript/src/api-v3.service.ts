@@ -64,6 +64,15 @@ module Api.V3 {
 			let url = this.getUrlToCall(apiUrl, filter, fieldTypes || types);
 			return this.callAndTransformCollection(method, url, types);
 		}
+		protected getCollectionCountByFilterAsync(filter: string, apiUrl?: string): ng.IPromise<number> {
+			let method = HttpMethod.GET;
+			if (!!filter) {
+				filter = "?" + filter;
+			}
+
+			let url = this.getUrlToCall(apiUrl, filter) + "fields=collection.count";
+			return this.callAndTransformCount(method, url);
+		}
 
 		/////////////////////
 		// POST ITEM       //
@@ -109,7 +118,7 @@ module Api.V3 {
 				return this.callAndTransformCollection(method, url, types, postableData);
 			} else {
 				let dfd = this.$q.defer();
-				dfd.reject(<Api.V3.ResponseError>{ Message: "You have to provide an id for each item." });
+				dfd.reject(<Api.V3.IResponseError>{ Message: "You have to provide an id for each item." });
 				return dfd.promise;
 			}
 		}
@@ -142,9 +151,9 @@ module Api.V3 {
 					data: postableData,
 				headers: { "Content-Type": "application/json" }, // Need to specify content-type because it's "text/plain" by default for DELETE
 			})
-				.then((response: ng.IHttpPromiseCallbackArg<ResponseItem<any>>) => {
+				.then((response: ng.IHttpPromiseCallbackArg<IResponseItem<any>>) => {
 					dfd.resolve();
-				}, (response: ng.IHttpPromiseCallbackArg<ResponseError>) => {
+				}, (response: ng.IHttpPromiseCallbackArg<IResponseError>) => {
 					dfd.reject(response.data.Message);
 				});
 			} else {
@@ -181,9 +190,9 @@ module Api.V3 {
 				url: url,
 				data: data,
 			})
-			.then((response: ng.IHttpPromiseCallbackArg<ResponseItem<any>>) => {
+			.then((response: ng.IHttpPromiseCallbackArg<IResponseItem<any>>) => {
 				dfd.resolve(Api.V3.fromApiData(types, response.data.data));
-			}, (response: ng.IHttpPromiseCallbackArg<ResponseError>) => {
+			}, (response: ng.IHttpPromiseCallbackArg<IResponseError>) => {
 				dfd.reject(response.data.Message);
 			});
 			return dfd.promise;
@@ -195,13 +204,13 @@ module Api.V3 {
 				url: url,
 				data: data,
 			})
-			.then((response: ng.IHttpPromiseCallbackArg<ResponseCollection<any>>) => {
+			.then((response: ng.IHttpPromiseCallbackArg<IResponseCollection<any>>) => {
 				dfd.resolve(
 					_.map(response.data.data.items, (item: any) => {
 						return Api.V3.fromApiData(types, item);
 					})
 				);
-			}, (response: ng.IHttpPromiseCallbackArg<ResponseError>) => {
+			}, (response: ng.IHttpPromiseCallbackArg<IResponseError>) => {
 				dfd.reject(response.data.Message);
 			});
 			return dfd.promise;
@@ -213,9 +222,22 @@ module Api.V3 {
 				url: url,
 				data: data,
 			})
-			.then((response: ng.IHttpPromiseCallbackArg<ResponseItem<any>>) => {
+			.then((response: ng.IHttpPromiseCallbackArg<IResponseItem<any>>) => {
 				dfd.resolve();
-			}, (response: ng.IHttpPromiseCallbackArg<ResponseError>) => {
+			}, (response: ng.IHttpPromiseCallbackArg<IResponseError>) => {
+				dfd.reject(response.data.Message);
+			});
+			return dfd.promise;
+		}
+		private callAndTransformCount(method: string, url: string): ng.IPromise<number> {
+			let dfd = this.$q.defer();
+			this.$http({
+				method: method,
+				url: url,
+			})
+			.then((response: ng.IHttpPromiseCallbackArg<IResponseCollection<any>>) => {
+				dfd.resolve(response.data.data.count);
+			}, (response: ng.IHttpPromiseCallbackArg<IResponseError>) => {
 				dfd.reject(response.data.Message);
 			});
 			return dfd.promise;
