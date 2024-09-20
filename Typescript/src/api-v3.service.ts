@@ -169,7 +169,7 @@ module Api.V3 {
 			} else {
 				url += "?";
 			}
-			if (!!types) {
+			if (!!types && url.indexOf("fields=") === -1) {
 				url += "fields=" + Api.V3.getApiFields(types);
 			}
 			return url;
@@ -196,8 +196,12 @@ module Api.V3 {
 				data: data,
 			})
 			.then((response: ng.IHttpPromiseCallbackArg<ResponseCollection<any>>) => {
+				const items = (response.data.data && response.data.data.items)
+					|| (response.data as any).items
+					|| response.data.data
+					|| response.data;
 				dfd.resolve(
-					_.map(response.data.data.items, (item: any) => {
+					_.map(items, (item: any) => {
 						return Api.V3.fromApiData(types, item);
 					})
 				);
